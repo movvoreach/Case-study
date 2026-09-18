@@ -25,8 +25,12 @@ class CourseController extends Controller
 
     public function index(Request $request): View
     {
-        $courses = $this->courseService->getAll();
-        $teachers = Teacher::all();
+        $filters = $request->only(['category_id', 'department_id', 'teacher_id', 'search']);
+        $courses = $this->courseService->getAll($filters);
+
+        $categories = CourseCategory::orderBy('category_name')->get();
+        $departments = Department::orderBy('department_name')->get();
+        $teachers = Teacher::orderBy('first_name')->get();
         $students = Student::all();
 
         $enrolledStudentsMap = Enrollment::select('course_id', 'student_id')
@@ -44,7 +48,16 @@ class CourseController extends Controller
                 return $items->pluck('teacher_id');
             });
 
-        return view('courses.index', compact('courses', 'teachers', 'students', 'enrolledStudentsMap', 'assignedTeachersMap'));
+        return view('courses.index', compact(
+            'courses',
+            'categories',
+            'departments',
+            'teachers',
+            'students',
+            'enrolledStudentsMap',
+            'assignedTeachersMap',
+            'filters'
+        ));
     }
 
     public function assignTeacher(Request $request): RedirectResponse

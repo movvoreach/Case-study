@@ -7,9 +7,34 @@ use Illuminate\Database\Eloquent\Collection;
 
 class CourseService
 {
-    public function getAll(): Collection
+    public function getAll(array $filters = []): Collection
     {
-        return Course::with(['category', 'department', 'teachers', 'lessons'])->latest('course_id')->get();
+        $query = Course::with(['category', 'department', 'teachers', 'lessons']);
+
+        if (!empty($filters['category_id'])) {
+            $query->where('course_category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['department_id'])) {
+            $query->where('department_id', $filters['department_id']);
+        }
+
+        if (!empty($filters['teacher_id'])) {
+            $query->whereHas('teachers', function ($q) use ($filters) {
+                $q->where('teachers.teacher_id', $filters['teacher_id']);
+            });
+        }
+
+        if (!empty($filters['search'])) {
+            $search = trim($filters['search']);
+            $query->where(function ($q) use ($search) {
+                $q->where('course_name', 'like', "%{$search}%")
+                  ->orWhere('course_code', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->latest('course_id')->get();
     }
 
     public function create(array $data): Course

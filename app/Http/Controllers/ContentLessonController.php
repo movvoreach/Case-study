@@ -103,6 +103,37 @@ class ContentLessonController extends Controller
         return redirect()->back()->with('success', 'Content has been created successfully.');
     }
 
+    public function show(ContentLesson $lesson)
+    {
+        if (request()->wantsJson()) {
+            return response()->json($lesson->load('courseModule', 'course'));
+        }
+
+        return view('content_lessons.show', compact('lesson'));
+    }
+
+    public function update(Request $request, ContentLesson $lesson)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content_type' => 'required|in:lesson,page,video,file,url,assignment,quiz,forum',
+            'summary' => 'nullable|string',
+            'body' => 'nullable|string',
+            'video_url' => 'nullable|string',
+        ]);
+
+        $lesson->update($validated);
+
+        return redirect()->back()->with('success', 'បានកែប្រែមេរៀនដោយជោគជ័យ។');
+    }
+
+    public function destroy(ContentLesson $lesson)
+    {
+        $lesson->delete();
+
+        return redirect()->back()->with('success', 'បានលុបមេរៀនដោយជោគជ័យ។');
+    }
+
     private function metadata(Request $request, array $validated, ?string $thumbnailPath, ?string $videoUploadPath, ?string $videoThumbnailPath, ?string $documentPath, array $attachmentFiles): array
     {
         return [

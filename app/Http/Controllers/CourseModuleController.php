@@ -27,4 +27,25 @@ class CourseModuleController extends Controller
 
         return redirect()->back()->with('success', 'បានបង្កើតម៉ូឌុលថ្មីដោយជោគជ័យ។');
     }
+
+    public function update(Request $request, CourseModule $module)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'module_number' => 'required|integer|min:1',
+            'description' => 'nullable|string',
+        ]);
+
+        $module->update($validated);
+
+        return redirect()->back()->with('success', 'បានកែប្រែម៉ូឌុលដោយជោគជ័យ។');
+    }
+
+    public function destroy(CourseModule $module)
+    {
+        $module->lessons()->delete();
+        $module->delete();
+
+        return redirect()->back()->with('success', 'បានលុបម៉ូឌុលដោយជោគជ័យ។');
+    }
 }

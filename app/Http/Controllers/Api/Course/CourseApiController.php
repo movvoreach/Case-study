@@ -9,6 +9,7 @@ use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use App\Services\CourseService;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -18,9 +19,9 @@ class CourseApiController extends Controller
     {
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        return CourseResource::collection($this->courseService->getAll());
+        return CourseResource::collection($this->courseService->getAll($request->only(['category_id', 'department_id', 'teacher_id', 'search'])));
     }
 
     public function store(StoreCourseRequest $request): JsonResponse

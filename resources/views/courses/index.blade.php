@@ -27,6 +27,87 @@
     </div>
 @endif
 
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-light d-flex align-items-center">
+        <h3 class="card-title mb-0 font-weight-bold text-dark">
+            <i class="fas fa-filter text-primary mr-2"></i>Filter Options
+        </h3>
+        <div class="card-tools ml-auto">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('courses.index') }}" method="GET" id="course-filter-form">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="filter_search" class="font-weight-normal">Keyword Search</label>
+                        <div class="input-group">
+                            <input type="text" name="search" id="filter_search" class="form-control" placeholder="Search by name, code..." value="{{ request('search') }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-search text-muted"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="filter_category" class="font-weight-normal">Category</label>
+                        <select name="category_id" id="filter_category" class="form-control select2bs4" style="width: 100%;">
+                            <option value="">-- All Categories --</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->course_category_id }}" {{ request('category_id') == $category->course_category_id ? 'selected' : '' }}>
+                                    {{ $category->category_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="filter_department" class="font-weight-normal">Department</label>
+                        <select name="department_id" id="filter_department" class="form-control select2bs4" style="width: 100%;">
+                            <option value="">-- All Departments --</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->department_id }}" {{ request('department_id') == $department->department_id ? 'selected' : '' }}>
+                                    {{ $department->department_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="filter_teacher" class="font-weight-normal">Teacher</label>
+                        <select name="teacher_id" id="filter_teacher" class="form-control select2bs4" style="width: 100%;">
+                            <option value="">-- All Teachers --</option>
+                            @foreach ($teachers as $teacher)
+                                <option value="{{ $teacher->teacher_id }}" {{ request('teacher_id') == $teacher->teacher_id ? 'selected' : '' }}>
+                                    {{ $teacher->full_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 d-flex justify-content-end align-items-center">
+                    @if(request()->filled('search') || request()->filled('category_id') || request()->filled('department_id') || request()->filled('teacher_id'))
+                        <a href="{{ route('courses.index') }}" class="btn btn-outline-secondary mr-2">
+                            <i class="fas fa-undo mr-1"></i> Reset
+                        </a>
+                    @endif
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fas fa-filter mr-1"></i> Apply Filter
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card shadow-sm">
     <div class="card-header d-flex align-items-center">
         <h3 class="card-title mb-0">Course List</h3>

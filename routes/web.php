@@ -41,9 +41,15 @@ Route::middleware('auth')->group(function () {
     Route::post('courses/assign-teacher', [CourseController::class, 'assignTeacher'])->name('courses.assign_teacher');
     Route::get('courses/{course}/modules', [CourseModuleController::class, 'index'])->name('courses.modules.index');
     Route::post('courses/{course}/modules', [CourseModuleController::class, 'store'])->name('courses.modules.store');
+    Route::put('modules/{module}', [CourseModuleController::class, 'update'])->name('modules.update');
+    Route::delete('modules/{module}', [CourseModuleController::class, 'destroy'])->name('modules.destroy');
+
     Route::get('lessons/create', [ContentLessonController::class, 'create'])->name('lessons.create');
     Route::post('lessons', [ContentLessonController::class, 'storeContent'])->name('lessons.store');
     Route::post('modules/{module}/lessons', [ContentLessonController::class, 'store'])->name('modules.lessons.store');
+    Route::get('lessons/{lesson}', [ContentLessonController::class, 'show'])->name('lessons.show');
+    Route::put('lessons/{lesson}', [ContentLessonController::class, 'update'])->name('lessons.update');
+    Route::delete('lessons/{lesson}', [ContentLessonController::class, 'destroy'])->name('lessons.destroy');
     
     Route::resource('courses', CourseController::class)->except(['index', 'show']);
     Route::resource('teachers', TeacherController::class)->except(['show']);
@@ -63,13 +69,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('academic-years', AcademicYearController::class)->except(['show']);
     Route::resource('enrollments', App\Http\Controllers\EnrollmentController::class)->except(['show']);
 
-    // Placeholder routes for sidebar links
+    // LMS Feature Routes
     Route::get('lessons', fn() => redirect()->route('lessons.create'))->name('lessons.index');
     Route::get('subjects', fn() => redirect()->route('courses.index'))->name('subjects.index');
-    Route::get('exams', fn() => redirect()->route('dashboard'))->name('exams.index');
-    Route::get('assignments', fn() => redirect()->route('dashboard'))->name('assignments.index');
-    Route::get('progress', fn() => redirect()->route('dashboard'))->name('progress.index');
-    Route::get('discussions', fn() => redirect()->route('dashboard'))->name('discussions.index');
+    Route::get('exams', [App\Http\Controllers\ExamController::class, 'index'])->name('exams.index');
+    Route::get('assignments', [App\Http\Controllers\AssignmentController::class, 'index'])->name('assignments.index');
+    Route::get('progress', [App\Http\Controllers\ProgressController::class, 'index'])->name('progress.index');
+    Route::get('discussions', [App\Http\Controllers\DiscussionController::class, 'index'])->name('discussions.index');
     Route::get('scores', fn() => redirect()->route('dashboard'))->name('scores.index');
     Route::get('attendances', fn() => redirect()->route('dashboard'))->name('attendances.index');
     Route::get('notifications', fn() => redirect()->route('dashboard'))->name('notifications.index');
