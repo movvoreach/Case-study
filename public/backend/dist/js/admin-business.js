@@ -13,7 +13,7 @@
             responsive: true,
             autoWidth: false,
             language: {
-                processing: '<i class="fas fa-spinner fa-spin mr-1"></i> Processing, please wait...'
+                processing: '<span class="app-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span class="app-sr">Processing, please wait...</span>'
             }
         }, options || {});
 

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('backend/dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/dist/css/loading.css') }}">
     <!-- Custom Font for Khmer -->
     <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -119,5 +120,6 @@
     </form>
 </div>
 
+<script src="{{ asset('backend/dist/js/loading.js') }}"></script>
 </body>
 </html>

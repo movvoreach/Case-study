@@ -14,11 +14,13 @@ class ContentLessonController extends Controller
     public function create(Request $request)
     {
         $courses = Course::with('courseModules')->orderBy('course_name')->get();
-        $modules = CourseModule::with('course')->orderBy('course_id')->orderBy('module_number')->get();
-        $existingSlugs = ContentLesson::pluck('slug')->values();
+        $modules = CourseModule::with('course')->withCount('lessons')->orderBy('course_id')->orderBy('module_number')->get();
+        // withTrashed: the `unique:content_lessons,slug` rule also counts soft-deleted rows.
+        $existingSlugs = ContentLesson::withTrashed()->pluck('slug')->values();
 
-        $selectedCourse = $courses->firstWhere('course_id', (int) $request->query('course_id'));
         $selectedModule = $modules->firstWhere('course_module_id', (int) $request->query('course_module_id'));
+        $selectedCourse = $courses->firstWhere('course_id', (int) $request->query('course_id'))
+            ?? $courses->firstWhere('course_id', $selectedModule?->course_id);
 
         return view('content_lessons.create', compact('courses', 'modules', 'existingSlugs', 'selectedCourse', 'selectedModule'));
     }
@@ -63,8 +65,9 @@ class ContentLessonController extends Controller
             'slug' => $validated['slug'] ?: $this->uniqueSlug($validated['title']),
             'content_type' => $validated['content_type'],
             'summary' => $validated['summary'] ?? null,
-            'body' => $validated['body'],
+            'body' => $validated['body'] ?? null,
             'video_url' => $validated['video_url'] ?? null,
+            'external_url' => $validated['external_url'] ?? null,
             'file_path' => $documentPath,
             'duration_minutes' => $validated['video_duration'] ?? null,
             'position' => $validated['position'],
@@ -78,7 +81,10 @@ class ContentLessonController extends Controller
         ]);
 
         return redirect()
-            ->route('lessons.create')
+            ->route('lessons.create', [
+                'course_id' => $module->course_id,
+                'course_module_id' => $module->course_module_id,
+            ])
             ->with('success', 'Content has been saved successfully.');
     }
 
@@ -155,6 +161,9 @@ class ContentLessonController extends Controller
                 'upload_path' => $videoUploadPath,
                 'thumbnail_path' => $videoThumbnailPath,
                 'transcript' => $request->input('video_transcript'),
+            ],
+            'external' => [
+                'title' => $validated['external_title'] ?? null,
             ],
             'quiz' => $request->input('quiz', []),
             'assignment' => $request->input('assignment', []),

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('backend/plugins/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/dist/css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/dist/css/admin-business.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/dist/css/loading.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
@@ -63,29 +64,7 @@
             cursor: default;
         }
 
-        .dataTables_wrapper {
-            position: relative;
-        }
-
-        .dataTables_processing,
-        .dataTables_wrapper.is-searching::after {
-            position: absolute;
-            top: 55%;
-            left: 50%;
-            z-index: 10;
-            min-width: 150px;
-            padding: 10px 16px;
-            color: #ffffff;
-            text-align: center;
-            background: rgba(0, 123, 255, 0.92);
-            border-radius: 4px;
-            box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.18);
-            transform: translate(-50%, -50%);
-        }
-
-        .dataTables_wrapper.is-searching::after {
-            content: "កំពុងស្វែងរក...";
-        }
+        /* DataTables' processing indicator is styled in dist/css/loading.css (three dots). */
 
         .main-sidebar {
             width: var(--sidebar-width) !important;
@@ -106,6 +85,22 @@
         .sidebar-collapse .main-header,
         .sidebar-collapse .main-footer {
             margin-left: 4.6rem !important;
+        }
+
+        /* Below 992px AdminLTE turns the sidebar into an off-canvas drawer: no content offset, full-width when open. */
+        @media (max-width: 991.98px) {
+            .content-wrapper,
+            .main-header,
+            .main-footer,
+            .sidebar-collapse .content-wrapper,
+            .sidebar-collapse .main-header,
+            .sidebar-collapse .main-footer {
+                margin-left: 0 !important;
+            }
+
+            body.sidebar-open .main-sidebar {
+                width: var(--sidebar-width) !important;
+            }
         }
 
         .main-sidebar .sidebar,
@@ -219,6 +214,7 @@
     <script src="{{ asset('backend/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('backend/dist/js/adminlte.min.js') }}"></script>
     <script src="{{ asset('backend/dist/js/admin-business.js') }}"></script>
+    <script src="{{ asset('backend/dist/js/loading.js') }}"></script>
     <script>
         $(function() {
             $('.select2bs4').select2({
@@ -232,7 +228,7 @@
                 pageLength: 10,
                 processing: true,
                 language: {
-                    processing: 'កំពុងដំណើរការ...',
+                    processing: '<span class="app-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span class="app-sr">កំពុងដំណើរការ...</span>',
                     search: 'ស្វែងរក:',
                     lengthMenu: 'បង្ហាញ _MENU_ ជួរ',
                     info: 'បង្ហាញ _START_ ដល់ _END_ នៃ _TOTAL_ ជួរ',
@@ -247,14 +243,8 @@
                         last: 'ចុងក្រោយ'
                     }
                 }
-            }).on('preDraw.dt', function() {
-                $(this).closest('.dataTables_wrapper').addClass('is-searching');
-            }).on('draw.dt', function() {
-                const wrapper = $(this).closest('.dataTables_wrapper');
-                setTimeout(function() {
-                    wrapper.removeClass('is-searching');
-                }, 250);
             });
+            // Search / sort / paging feedback is handled globally by loading.js (mask over the table area).
         });
     </script>
 

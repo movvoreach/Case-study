@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="card-body">
-        <form action="{{ route('courses.index') }}" method="GET" id="course-filter-form">
+        <form action="{{ route('courses.index') }}" method="GET" id="course-filter-form" data-loading-target="#course-results">
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
@@ -95,7 +95,7 @@
             <div class="row">
                 <div class="col-12 d-flex justify-content-end align-items-center">
                     @if(request()->filled('search') || request()->filled('category_id') || request()->filled('department_id') || request()->filled('teacher_id'))
-                        <a href="{{ route('courses.index') }}" class="btn btn-outline-secondary mr-2">
+                        <a href="{{ route('courses.index') }}" class="btn btn-outline-secondary mr-2" data-loading-target="#course-results">
                             <i class="fas fa-undo mr-1"></i> Reset
                         </a>
                     @endif
@@ -108,7 +108,7 @@
     </div>
 </div>
 
-<div class="card shadow-sm">
+<div class="card shadow-sm" id="course-results">
     <div class="card-header d-flex align-items-center">
         <h3 class="card-title mb-0">Course List</h3>
         @auth
